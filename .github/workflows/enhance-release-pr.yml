@@ -20,13 +20,13 @@ permissions:
 jobs:
   enhance-release-pr:
     name: 🤖 Claude AI Enhancement
-    if: startsWith(github.head_ref, 'release-please--')
+    if: startsWith(github.event.pull_request.head.ref, 'release-please--')
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout PR Branch
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -80,7 +80,7 @@ jobs:
             REPO: ${{ github.repository }}
             PROPOSED_VERSION: ${{ steps.version.outputs.version }}
             PREVIOUS_VERSION: ${{ steps.prev_version.outputs.prev_version }}
-            PR_BRANCH: ${{ github.head_ref }}
+            PR_BRANCH: ${{ github.event.pull_request.head.ref }}
             PR_NUMBER: ${{ github.event.pull_request.number }}
             
             # 🤖 CLAUDE CODE: RELEASE MANAGER FOR pieces-app/encrypt
@@ -260,7 +260,7 @@ jobs:
             
             3. **Push All Changes:**
                ```bash
-               git push origin ${{ github.head_ref }}
+               git push origin ${{ github.event.pull_request.head.ref }}
                ```
             
             4. **Be Conservative** - this is a cryptography library used in production
