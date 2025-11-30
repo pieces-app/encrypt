@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.3](https://github.com/pieces-app/encrypt/compare/v5.1.2...v5.1.3) (2025-11-30)
+
+
+### 🐛 Bug Fixes
+
+* ensure verify-release runs when fallback job creates releases ([ba07afe](https://github.com/pieces-app/encrypt/commit/ba07afec25b5d2947fb7bf691d10c0601c9b0ca3))
+
 ## [5.1.2](https://github.com/pieces-app/encrypt/compare/v5.1.1...v5.1.2) (2025-11-30)
 
 
