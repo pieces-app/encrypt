@@ -5,6 +5,7 @@ on:
     types: [opened, synchronize, reopened]
     branches:
       - main
+  workflow_dispatch: # Added to allow manual triggering
 
 # Cancel in-progress runs when a new commit is pushed to the same PR
 concurrency:
