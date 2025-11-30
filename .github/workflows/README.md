@@ -109,10 +109,10 @@ Release Please analyzes conventional commits and automatically:
 When a Release Please PR is created, this workflow:
 
 1. **Extracts version** from PR title (e.g., "chore: release 5.1.4")
-2. **Checks if already enhanced** by looking for "🚀 Release Highlights" in CHANGELOG.md
+2. **Checks if already enhanced** by looking for "### 🚀 Release Highlights" in CHANGELOG.md
 3. **If not enhanced**, Claude AI:
    - Reviews version appropriateness based on commit history
-   - Adds "🚀 Release Highlights" section to CHANGELOG.md
+   - Adds "### 🚀 Release Highlights" section to CHANGELOG.md
    - Syncs documentation (README.md, CHANGELOG.md)
    - Closes related issues (if commits reference them)
    - Posts a summary comment on the PR
@@ -171,7 +171,7 @@ When a Release Please PR is created, this workflow:
 ┌─────────────────────────────────────────────────────────────┐
 │ 6. Release Please creates:                                 │
 │    - Git tag (e.g., v5.1.4)                                │
-│    - GitHub Release                                         │
+│    - a GitHub Release                                       │
 │    - Verify Release workflow validates the release          │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -185,7 +185,7 @@ All commits should follow [Conventional Commits](https://www.conventionalcommits
 - `feat:` - New features (minor version bump)
 - `fix:` - Bug fixes (patch version bump)
 - `feat!:` or `BREAKING CHANGE:` - Breaking changes (major version bump)
-- `docs:`, `chore:`, `refactor:`, `perf:`, `test:`, `ci:` - No version bump
+- `docs:`, `chore:`, `refactor:`, `perf:`, `test:`, `ci:` – Do not trigger a version bump by themselves, but may still appear in releases and changelogs
 
 ### Version Management
 - Versions follow [Semantic Versioning](https://semver.org/)
