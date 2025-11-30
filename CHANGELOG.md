@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.7](https://github.com/pieces-app/encrypt/compare/v5.1.6...v5.1.7) (2025-11-30)
+
+
+### 🐛 Bug Fixes
+
+* add final check before Release Please to prevent race conditions ([#13](https://github.com/pieces-app/encrypt/issues/13)) ([590f93a](https://github.com/pieces-app/encrypt/commit/590f93a6a4ffde17f86e4c66bbc37a303cb839c3))
+
 ## [5.1.6](https://github.com/pieces-app/encrypt/compare/v5.1.5...v5.1.6) (2025-11-30)
 
 ### 🚀 Release Highlights
