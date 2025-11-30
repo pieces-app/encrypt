@@ -32,48 +32,14 @@ permissions:
   actions: write
 
 jobs:
-  release-please:
-    name: 📦 Release Please
-    runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-      releases_created: ${{ steps.release.outputs.releases_created }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
-      version: ${{ steps.release.outputs.version }}
-      major: ${{ steps.release.outputs.major }}
-      minor: ${{ steps.release.outputs.minor }}
-      patch: ${{ steps.release.outputs.patch }}
-      sha: ${{ steps.release.outputs.sha }}
-      pr: ${{ steps.release.outputs.pr }}
-      prs_created: ${{ steps.release.outputs.prs_created }}
-    steps:
-      - name: 📥 Checkout source code
-        uses: actions/checkout@v4
-
-      - name: 🤖 Run Release Please
-        id: release
-        uses: googleapis/release-please-action@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          config-file: release-please-config.json
-          manifest-file: .release-please-manifest.json
-          target-branch: ${{ github.ref_name }}
-
-      - name: 📝 Log Release Info
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
-        run: |
-          echo "🎉 Release created!"
-          echo "📦 Version: ${{ steps.release.outputs.version }}"
-          echo "🏷️ Tag: ${{ steps.release.outputs.tag_name }}"
-          echo "🔗 https://github.com/${{ github.repository }}/releases/tag/${{ steps.release.outputs.tag_name }}"
-
   # =============================================================================
-  # Fallback: Handle Untagged Merged Release PRs
+  # Step 1: Handle Untagged Merged Release PRs FIRST
   # =============================================================================
+  # This MUST run before release-please to prevent "untagged PRs outstanding" abort
+  # Release Please aborts if it finds merged PRs with "autorelease: pending" label
+  # By running this first, we ensure all untagged PRs are tagged before Release Please checks
   handle-untagged-releases:
-    name: 🔧 Handle Untagged Releases (Fallback)
-    needs: release-please
-    if: ${{ needs.release-please.outputs.releases_created != 'true' }}
+    name: 🔧 Handle Untagged Releases (Pre-Check)
     runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.process.outputs.release_created }}
@@ -212,7 +178,46 @@ jobs:
           fi
 
   # =============================================================================
-  # Verify Release
+  # Step 2: Run Release Please (after untagged PRs are handled)
+  # =============================================================================
+  release-please:
+    name: 📦 Release Please
+    needs: handle-untagged-releases
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+      major: ${{ steps.release.outputs.major }}
+      minor: ${{ steps.release.outputs.minor }}
+      patch: ${{ steps.release.outputs.patch }}
+      sha: ${{ steps.release.outputs.sha }}
+      pr: ${{ steps.release.outputs.pr }}
+      prs_created: ${{ steps.release.outputs.prs_created }}
+    steps:
+      - name: 📥 Checkout source code
+        uses: actions/checkout@v4
+
+      - name: 🤖 Run Release Please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          target-branch: ${{ github.ref_name }}
+
+      - name: 📝 Log Release Info
+        if: ${{ steps.release.outputs.releases_created == 'true' }}
+        run: |
+          echo "🎉 Release created!"
+          echo "📦 Version: ${{ steps.release.outputs.version }}"
+          echo "🏷️ Tag: ${{ steps.release.outputs.tag_name }}"
+          echo "🔗 https://github.com/${{ github.repository }}/releases/tag/${{ steps.release.outputs.tag_name }}"
+
+  # =============================================================================
+  # Step 3: Verify Release
   # =============================================================================
   verify-release:
     name: ✅ Verify Release
