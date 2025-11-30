@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.1.6](https://github.com/pieces-app/encrypt/compare/v5.1.5...v5.1.6) (2025-11-30)
+
+### 🚀 Release Highlights
+
+This release improves the reliability of the automated release workflow by ensuring proper version detection and tag handling. The fix prevents workflow failures when managing releases, resulting in more stable and predictable release automation for the encrypt library.
+
+### 🐛 Bug Fixes
+
+* run handle-untagged-releases before Release Please to prevent abort ([62c8541](https://github.com/pieces-app/encrypt/commit/62c854168d815085b51fd3f4918b5187012b1503))
+* run handle-untagged-releases before Release Please to prevent abort ([#12](https://github.com/pieces-app/encrypt/issues/12)) ([0ba0ea5](https://github.com/pieces-app/encrypt/commit/0ba0ea53ae8f89e85f112e8ac614d7670e2cf9ae))
+
 ## [5.1.5](https://github.com/pieces-app/encrypt/compare/v5.1.4...v5.1.5) (2025-11-30)
 
 ### 🚀 Release Highlights
