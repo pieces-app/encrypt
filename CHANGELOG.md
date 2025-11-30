@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.1.2](https://github.com/pieces-app/encrypt/compare/v5.1.1...v5.1.2) (2025-11-30)
+
+
+### 🐛 Bug Fixes
+
+* use github.event.pull_request.head.ref instead of github.head_ref ([369e899](https://github.com/pieces-app/encrypt/commit/369e8997889a2ec4c5ab880b4b72ecde07897a07))
+
+
+### 📚 Documentation
+
+* add release highlights for v5.1.0 and v5.1.1 ([d04ff34](https://github.com/pieces-app/encrypt/commit/d04ff34a8fb626ac05d81ab4eccea51fc877a92c))
+
 ## [5.1.1](https://github.com/pieces-app/encrypt/compare/v5.1.0...v5.1.1) (2025-11-30)
 
 
