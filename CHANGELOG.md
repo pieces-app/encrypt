@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.4](https://github.com/pieces-app/encrypt/compare/v5.1.3...v5.1.4) (2025-11-30)
+
+
+### 🐛 Bug Fixes
+
+* resolve dart analyze lint errors ([6b2e2a7](https://github.com/pieces-app/encrypt/commit/6b2e2a79eb86f45b89c206d47225d4bcb60dd1d9))
+
 ## [5.1.3](https://github.com/pieces-app/encrypt/compare/v5.1.2...v5.1.3) (2025-11-30)
 
 
