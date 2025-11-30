@@ -2,6 +2,9 @@
 
 ## [5.1.6](https://github.com/pieces-app/encrypt/compare/v5.1.5...v5.1.6) (2025-11-30)
 
+### 🚀 Release Highlights
+
+This release improves the reliability of the automated release workflow by ensuring proper version detection and tag handling. The fix prevents workflow failures when managing releases, resulting in more stable and predictable release automation for the encrypt library.
 
 ### 🐛 Bug Fixes
 
