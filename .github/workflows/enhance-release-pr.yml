@@ -1,0 +1,276 @@
+name: Enhance Release PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - 5.x
+
+# Cancel in-progress runs when a new commit is pushed to the same PR
+concurrency:
+  group: enhance-release-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+jobs:
+  enhance-release-pr:
+    name: 🤖 Claude AI Enhancement
+    if: startsWith(github.head_ref, 'release-please--')
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout PR Branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Extract Version from PR Title
+        id: version
+        run: |
+          VERSION=$(echo "${{ github.event.pull_request.title }}" | grep -oP '\d+\.\d+\.\d+' || echo "")
+          if [ -z "$VERSION" ]; then
+            echo "⚠️ Could not extract version from PR title"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "📦 Detected version: $VERSION"
+          fi
+
+      - name: ⬅️ Get Previous Version
+        id: prev_version
+        if: steps.version.outputs.skip != 'true'
+        run: |
+          PREV=$(cat .release-please-manifest.json | grep -oP '"\.: "\K[^"]+' || echo "0.0.0")
+          echo "prev_version=$PREV" >> $GITHUB_OUTPUT
+          echo "📦 Previous version: $PREV"
+
+      - name: ✅ Check if Already Enhanced
+        id: check
+        if: steps.version.outputs.skip != 'true'
+        run: |
+          if grep -q "### 🚀 Release Highlights" CHANGELOG.md; then
+            VERSION_LINE=$(grep -n "## \[${{ steps.version.outputs.version }}\]" CHANGELOG.md | head -1 | cut -d: -f1 || echo "0")
+            HIGHLIGHTS_LINE=$(grep -n "### 🚀 Release Highlights" CHANGELOG.md | head -1 | cut -d: -f1 || echo "99999")
+            
+            if [ "$VERSION_LINE" != "0" ] && [ "$HIGHLIGHTS_LINE" -gt "$VERSION_LINE" ]; then
+              NEXT_VERSION=$(grep -n "## \[" CHANGELOG.md | grep -v "^$VERSION_LINE:" | head -1 | cut -d: -f1 || echo "99999")
+              if [ "$HIGHLIGHTS_LINE" -lt "${NEXT_VERSION:-99999}" ]; then
+                echo "✅ Already enhanced"
+                echo "already_enhanced=true" >> $GITHUB_OUTPUT
+                exit 0
+              fi
+            fi
+          fi
+          echo "already_enhanced=false" >> $GITHUB_OUTPUT
+
+      - name: 🤖 Full Release Enhancement with Claude
+        if: steps.version.outputs.skip != 'true' && steps.check.outputs.already_enhanced != 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY_GLOBAL_CLOUD_RUNTIME }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PROPOSED_VERSION: ${{ steps.version.outputs.version }}
+            PREVIOUS_VERSION: ${{ steps.prev_version.outputs.prev_version }}
+            PR_BRANCH: ${{ github.head_ref }}
+            PR_NUMBER: ${{ github.event.pull_request.number }}
+            
+            # 🤖 CLAUDE CODE: RELEASE MANAGER FOR pieces-app/encrypt
+            
+            ## Project Context
+            
+            **Encrypt** is a **Dart cryptography library** providing high-level APIs over PointyCastle for two-way cryptography.
+            
+            Key characteristics:
+            - **Cryptography**: AES, RSA, and other encryption/decryption capabilities
+            - **PointyCastle wrapper**: High-level APIs over the PointyCastle library
+            - **Secure random**: Includes secure-random executable
+            - **Production-ready**: Used in production applications for encryption needs
+            
+            Key files:
+            - `lib/encrypt.dart` - Main library entry point
+            - `lib/src/` - Core encryption implementation
+            - `bin/secure-random.dart` - Secure random executable
+            
+            Release Please has proposed version **${{ steps.version.outputs.version }}** (from ${{ steps.prev_version.outputs.prev_version }}).
+            
+            ---
+            
+            ## 🎯 YOUR MISSION: Complete Pre-Release Enhancement
+            
+            Execute these tasks IN ORDER:
+            
+            ---
+            
+            ## TASK 0: 🔢 VERSION REVIEW (CRITICAL - DO THIS FIRST!)
+            
+            ```bash
+            git log v${{ steps.prev_version.outputs.prev_version }}..HEAD --oneline 2>/dev/null || git log --oneline -20
+            ```
+            
+            **Version Rules:**
+            | Change Type | Version | Examples |
+            |-------------|---------|----------|
+            | **MAJOR** | X.0.0 | Breaking API changes, removed methods, incompatible changes |
+            | **MINOR** | x.Y.0 | New encryption algorithms, new features, new APIs |
+            | **PATCH** | x.y.Z | Bug fixes, security patches, performance improvements, docs |
+            
+            **⚠️ BREAKING CHANGE Rules (IMPORTANT!):**
+            
+            Only use MAJOR bump for **actual API breaking changes**:
+            - ✅ Removing or renaming public methods/classes
+            - ✅ Changing method signatures
+            - ✅ Incompatible encryption format changes
+            
+            **NEVER** MAJOR for:
+            - ❌ Workflow/CI changes
+            - ❌ Documentation updates
+            - ❌ Internal refactoring
+            - ❌ Adding new features (that's MINOR)
+            - ❌ Security patches (usually PATCH)
+            
+            **If version is wrong** (e.g., 6.0.0 for docs changes):
+            1. Update `.release-please-manifest.json` to correct version
+            2. Update `pubspec.yaml` version field
+            3. Update CHANGELOG.md version header
+            4. Commit: `fix: Adjust version to X.Y.Z (from proposed A.B.C)`
+            
+            ---
+            
+            ## TASK 1: 📝 ADD RELEASE HIGHLIGHTS
+            
+            Insert after version header in CHANGELOG.md:
+            
+            ```markdown
+            ### 🚀 Release Highlights
+            
+            [2-4 sentences about DEVELOPER IMPACT, not implementation details]
+            [Focus on: new encryption capabilities, security improvements, API enhancements]
+            ```
+            
+            **✅ GOOD Example:**
+            ```markdown
+            ### 🚀 Release Highlights
+            
+            This release adds support for AES-GCM encryption mode, providing authenticated encryption
+            with better security guarantees. The update also includes performance improvements for
+            large file encryption operations.
+            ```
+            
+            **❌ BAD Example:**
+            ```markdown
+            ### 🚀 Release Highlights
+            
+            Various improvements and updates. Fixed some bugs and updated dependencies.
+            Please update when convenient.
+            ```
+            
+            Commit: `docs: Add AI-enhanced release highlights for v${{ steps.version.outputs.version }}`
+            
+            ---
+            
+            ## TASK 2: 📚 DOCUMENTATION SYNC
+            
+            Check if these need updates:
+            - `README.md` - Installation instructions, version references, usage examples
+            - `CHANGELOG.md` - Ensure all changes are properly documented
+            
+            **Only update if genuinely needed.** Don't change for the sake of it.
+            
+            ---
+            
+            ## TASK 3: 🏷️ ISSUE MANAGEMENT
+            
+            ```bash
+            gh issue list --repo ${{ github.repository }} --state open --limit 50
+            ```
+            
+            **When to CLOSE an issue:**
+            - Commit explicitly says "Fixes #X" or "Closes #X"
+            - You can verify the fix by reading code changes
+            - Issue description matches what was changed
+            
+            **When NOT to close:**
+            - Partially addressed (comment with progress instead)
+            - Not 100% certain it's fixed
+            - Security issues needing user verification
+            
+            **Closing comment format:**
+            ```
+            🎉 This issue has been addressed in v${{ steps.version.outputs.version }}!
+            The fix will be available once the release PR merges.
+            ```
+            
+            ---
+            
+            ## TASK 4: 💬 POST PR SUMMARY
+            
+            ```bash
+            gh pr comment ${{ github.event.pull_request.number }} --body "## 🔐 Release v[VERSION] Ready!
+            
+            ### Version Review:
+            - **Proposed:** ${{ steps.version.outputs.version }}
+            - **Final:** [ACTUAL_VERSION] ✅
+            - **Reason:** [Why this version is correct]
+            
+            ### What Claude Did:
+            - [x] Reviewed version appropriateness
+            - [x] Added Release Highlights to CHANGELOG.md
+            - [x] Reviewed documentation (updates: yes/no)
+            - [x] Processed related issues (N found)
+            
+            ### Security/Crypto Notes:
+            [Notes about encryption improvements, security patches, API changes, etc.]
+            
+            ### Installation (after merge):
+            \\\`\\\`\\\`yaml
+            dependencies:
+              encrypt:
+                git:
+                  url: https://github.com/pieces-app/encrypt
+                  tag_pattern: \"^v\"
+                version: ^[VERSION]
+            \\\`\\\`\\\`
+            
+            **Ready to merge!** 🎉
+            
+            ---
+            *🤖 Generated by Claude Code Action*"
+            ```
+            
+            ---
+            
+            ## EXECUTION RULES
+            
+            1. **Git Setup First:**
+               ```bash
+               git config user.name "github-actions[bot]"
+               git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+               ```
+            
+            2. **Commit Each Change Separately** with conventional commit messages
+            
+            3. **Push All Changes:**
+               ```bash
+               git push origin ${{ github.head_ref }}
+               ```
+            
+            4. **Be Conservative** - this is a cryptography library used in production
+            
+            Now execute all tasks in order!
+          claude_args: |
+            --allowedTools "Read,Edit,Bash(git:*),Bash(gh:*),Bash(cat:*),Bash(head:*),Bash(grep:*)"
+
+      - name: ℹ️ Already Enhanced Notice
+        if: steps.check.outputs.already_enhanced == 'true'
+        run: |
+          echo "ℹ️ Release PR already enhanced - skipping"
+

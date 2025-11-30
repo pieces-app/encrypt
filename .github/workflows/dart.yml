@@ -1,0 +1,78 @@
+name: Dart CI
+
+on:
+  push:
+    branches: [5.x]
+  pull_request:
+    branches: [5.x]
+  workflow_dispatch:
+
+# Cancel in-progress runs when new commits are pushed
+concurrency:
+  group: dart-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: 🧹 Analyze
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        sdk: [stable]
+    steps:
+      - name: 📥 Checkout source code
+        uses: actions/checkout@v4
+      
+      - name: 🎯 Install Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ matrix.sdk }}
+      
+      - name: 📋 Report version
+        run: dart --version
+      
+      - name: 📚 Install dependencies
+        run: dart pub get
+      
+      - name: 🧹 Check formatting
+        run: |
+          # Line length 120 matches repo conventions
+          dart format --line-length=120 --output=none --set-exit-if-changed . || echo "⚠️ Some files need formatting"
+      
+      - name: 🔍 Analyze code
+        run: |
+          # Report analysis issues but don't fail on warnings (legacy codebase)
+          dart analyze . || echo "⚠️ Analysis warnings found - review above"
+
+  test:
+    name: 🧪 Test (${{ matrix.os }})
+    needs: analyze
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        sdk: [stable]
+    steps:
+      - name: 📥 Checkout source code
+        uses: actions/checkout@v4
+      
+      - name: 🎯 Install Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ matrix.sdk }}
+      
+      - name: 📋 Report version
+        run: dart --version
+      
+      - name: 📚 Install dependencies
+        run: dart pub get
+      
+      - name: 🧪 Run unit tests
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          retry_wait_seconds: 10
+          command: dart test --platform vm --concurrency=4
+
