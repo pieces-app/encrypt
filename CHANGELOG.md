@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.1](https://github.com/pieces-app/encrypt/compare/v5.1.0...v5.1.1) (2025-11-30)
+
+
+### 🔧 Chores
+
+* disable pub.dev publishing ([e364c12](https://github.com/pieces-app/encrypt/commit/e364c128fb447467ed407c8630d72c14f620ab70))
+
 ## [5.1.0](https://github.com/pieces-app/encrypt/compare/v5.0.4...v5.1.0) (2025-11-30)
 
 
