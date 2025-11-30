@@ -138,7 +138,7 @@ When a Release Please PR is created, this workflow:
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ 1. Developer commits with conventional commit message       │
-│    Example: "fix: resolve dart analyze lint errors"        │
+│    Example: "fix: resolve dart analyze lint errors"          │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
@@ -147,32 +147,32 @@ When a Release Please PR is created, this workflow:
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ 3. Release Please workflow runs                                  │
+│    - Analyzes commits                                           │
+│    - Creates/updates release PR (e.g., "chore: release 5.1.4")  │
+└────────────────────┬────────────────────────────────────────────┘
+                     │
+                     ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 3. Release Please workflow runs                            │
-│    - Analyzes commits                                       │
-│    - Creates/updates release PR (e.g., "chore: release 5.1.4")│
+│ 4. Enhance Release PR workflow triggers                      |
+│    - Claude AI enhances the PR                              |
+│    - Adds release highlights                                |
+│    - Reviews version                                        |
+│    - Updates documentation                                  |
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 4. Enhance Release PR workflow triggers                    │
-│    - Claude AI enhances the PR                             │
-│    - Adds release highlights                               │
-│    - Reviews version                                       │
-│    - Updates documentation                                 │
+│ 5. PR is reviewed and merged                                │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 5. PR is reviewed and merged                               │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 6. Release Please creates:                                 │
-│    - Git tag (e.g., v5.1.4)                                │
+│ 6. Release Please creates:                                  │
+│    - Git tag (e.g., v5.1.4)                                 │
 │    - a GitHub Release                                       │
-│    - Verify Release workflow validates the release          │
+│    - Verify Release workflow validates the release           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
