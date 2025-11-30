@@ -2,6 +2,34 @@
 
 ## [5.1.5](https://github.com/pieces-app/encrypt/compare/v5.1.4...v5.1.5) (2025-11-30)
 
+
+### 🐛 Bug Fixes
+
+* add workflow_dispatch trigger to enhance-release-pr workflow ([a83d6ab](https://github.com/pieces-app/encrypt/commit/a83d6ab29a4e49eeea07d5cb0ed64e56afcc6316))
+* replace grep -oP with portable sed commands and fix YAML lint errors ([257301f](https://github.com/pieces-app/encrypt/commit/257301f4a58182c7945a0e819d618913b9342732))
+* update manifest to match latest actual release (5.1.4) ([22f656a](https://github.com/pieces-app/encrypt/commit/22f656a7d7e9301302d10d986734bcb2372b82f2))
+* Use base branch manifest and GitHub releases for previous version detection ([829d65b](https://github.com/pieces-app/encrypt/commit/829d65bfbb68562bf8a9b8ee3bbce68993e7d3ff))
+
+
+### 📚 Documentation
+
+* Add AI-enhanced release highlights for v5.1.5 ([65e0041](https://github.com/pieces-app/encrypt/commit/65e0041f969b1d5f3f2015047178d6232b803a25))
+* add clarifying comment to version detection workflow ([3c61131](https://github.com/pieces-app/encrypt/commit/3c611312e1f70026a92c426535df140c5cad79ef))
+* add comprehensive CI/CD workflows documentation ([daaa506](https://github.com/pieces-app/encrypt/commit/daaa506bf80ca9b9d4530daa0adc091c0eab9ed3))
+* add comprehensive CI/CD workflows documentation ([#6](https://github.com/pieces-app/encrypt/issues/6)) ([b44f758](https://github.com/pieces-app/encrypt/commit/b44f7587dfa3e8ecc2cb100db9abe4323e31efad))
+* apply Copilot AI review suggestions to workflows README ([f933a92](https://github.com/pieces-app/encrypt/commit/f933a920c94882c5fcda4c06b1d5749dff48107f))
+* fix Copilot AI review suggestions in workflows README ([547788b](https://github.com/pieces-app/encrypt/commit/547788b27a84176d5ebf191b108ea4dcfbff5fa4))
+* fix Copilot AI review suggestions in workflows README ([a213efc](https://github.com/pieces-app/encrypt/commit/a213efc38e520be6f6b25e4f4ddf5646bcad7775))
+
+
+### 🔧 Chores
+
+* release 5.1.5 ([fde8f54](https://github.com/pieces-app/encrypt/commit/fde8f546a297d6794153d69c0dbaa12f7a7f37fc))
+* release 5.1.5 ([803ac26](https://github.com/pieces-app/encrypt/commit/803ac2631509e34fc87a01358d183ab0d84a130c))
+* update workflows to use main branch instead of 5.x ([fa9a025](https://github.com/pieces-app/encrypt/commit/fa9a02582ef8fece47ac43fb2fb0e54ee3027023))
+
+## [5.1.5](https://github.com/pieces-app/encrypt/compare/v5.1.4...v5.1.5) (2025-11-30)
+
 ### 🚀 Release Highlights
 
 This release enhances developer experience with comprehensive CI/CD workflows documentation, making it easier to understand and contribute to the library's automated testing and release processes. The documentation improvements help teams integrate the encrypt library more confidently into their production environments.
