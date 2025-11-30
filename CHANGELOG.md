@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.5](https://github.com/pieces-app/encrypt/compare/v5.1.4...v5.1.5) (2025-11-30)
+
+
+### 📚 Documentation
+
+* add comprehensive CI/CD workflows documentation ([#6](https://github.com/pieces-app/encrypt/issues/6)) ([b44f758](https://github.com/pieces-app/encrypt/commit/b44f7587dfa3e8ecc2cb100db9abe4323e31efad))
+
 ## [5.1.4](https://github.com/pieces-app/encrypt/compare/v5.1.3...v5.1.4) (2025-11-30)
 
 
