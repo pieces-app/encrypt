@@ -2,6 +2,9 @@
 
 ## [5.1.5](https://github.com/pieces-app/encrypt/compare/v5.1.4...v5.1.5) (2025-11-30)
 
+### 🚀 Release Highlights
+
+This release focuses on improving developer experience and workflow reliability with enhanced CI/CD automation. Key improvements include better version detection for release management and comprehensive documentation of the automated workflows that ensure code quality and streamlined releases.
 
 ### 🐛 Bug Fixes
 
