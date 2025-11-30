@@ -2,9 +2,6 @@
 
 ## [5.1.1](https://github.com/pieces-app/encrypt/compare/v5.1.0...v5.1.1) (2025-11-30)
 
-### 🚀 Release Highlights
-
-This release disables pub.dev publishing for this maintained fork, as the package is consumed via git dependencies in the AOT monorepo. The publish workflow has been removed to prevent publishing conflicts with the original package on pub.dev.
 
 ### 🔧 Chores
 
@@ -12,9 +9,6 @@ This release disables pub.dev publishing for this maintained fork, as the packag
 
 ## [5.1.0](https://github.com/pieces-app/encrypt/compare/v5.0.4...v5.1.0) (2025-11-30)
 
-### 🚀 Release Highlights
-
-This release establishes automated CI/CD workflows and release management for the encrypt cryptography library fork. The new infrastructure includes comprehensive testing across multiple Dart SDK versions (stable, beta, dev) and operating systems, AI-enhanced release notes via Claude, and automated release management using Release Please. This ensures consistent quality and transparency for this security-critical cryptography package.
 
 ### ✨ Features
 
