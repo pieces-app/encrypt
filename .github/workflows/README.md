@@ -19,8 +19,8 @@ The CI/CD system consists of three main workflows:
 **Purpose:** Ensures code quality and runs tests on all changes.
 
 **Triggers:**
-- Push to `5.x` branch
-- Pull requests targeting `5.x`
+- Push to `main` branch
+- Pull requests targeting `main`
 - Manual dispatch (`workflow_dispatch`)
 
 **Jobs:**
@@ -49,7 +49,7 @@ The CI/CD system consists of three main workflows:
 **Purpose:** Automates version management and release creation using [Release Please](https://github.com/googleapis/release-please).
 
 **Triggers:**
-- Push to `5.x` branch
+- Push to `main` branch
 
 **How It Works:**
 
@@ -90,7 +90,7 @@ Release Please analyzes conventional commits and automatically:
 **Configuration:**
 - Config file: `release-please-config.json`
 - Manifest: `.release-please-manifest.json`
-- Target branch: `5.x`
+- Target branch: `main`
 
 **Concurrency:** Only one Release Please run per branch at a time (doesn't cancel in-progress runs).
 
@@ -143,7 +143,7 @@ When a Release Please PR is created, this workflow:
                      │
                      ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 2. Push to 5.x branch                                       │
+│ 2. Push to main branch                                      │
 └────────────────────┬────────────────────────────────────────┘
                      │
                      ▼
@@ -261,7 +261,7 @@ All workflows require:
 ```bash
 # Push an empty commit to trigger Release Please
 git commit --allow-empty -m "chore: trigger release"
-git push origin 5.x
+git push origin main
 ```
 
 ### Manually create release
@@ -290,5 +290,5 @@ If enhancement needs to be skipped:
 
 ## Workflow Status
 
-All workflows are active and running on the `5.x` branch. The system is fully automated and requires minimal manual intervention.
+All workflows are active and running on the `main` branch. The system is fully automated and requires minimal manual intervention.
 

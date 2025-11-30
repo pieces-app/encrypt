@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
-      - 5.x
+      - main
 
 # Cancel in-progress runs when a new commit is pushed to the same PR
 concurrency:

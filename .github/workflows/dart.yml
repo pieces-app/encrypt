@@ -2,9 +2,9 @@ name: Dart CI
 
 on:
   push:
-    branches: [5.x]
+    branches: [main]
   pull_request:
-    branches: [5.x]
+    branches: [main]
   workflow_dispatch:
 
 # Cancel in-progress runs when new commits are pushed

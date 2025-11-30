@@ -18,7 +18,7 @@ name: Release Please
 on:
   push:
     branches:
-      - 5.x
+      - main
 
 # Only one Release Please run per branch at a time
 concurrency:
