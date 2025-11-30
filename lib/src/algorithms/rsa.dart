@@ -21,7 +21,6 @@ abstract class AbstractRSA {
           RSAEngine(),
         );
       case RSADigest.SHA1:
-      default:
         return OAEPEncoding.withSHA1(RSAEngine());
     }
   }
