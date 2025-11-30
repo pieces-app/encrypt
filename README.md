@@ -1,10 +1,11 @@
 # encrypt
 
 [![Pub Package](https://img.shields.io/pub/v/encrypt.svg)](https://pub.dartlang.org/packages/encrypt)
-[![Dart CI](https://github.com/leocavalcante/encrypt/actions/workflows/dart.yaml/badge.svg)](https://github.com/leocavalcante/encrypt/actions/workflows/dart.yaml)
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=E4F45BFVMFVQW)
+[![Dart CI](https://github.com/pieces-app/encrypt/actions/workflows/dart.yml/badge.svg)](https://github.com/pieces-app/encrypt/actions/workflows/dart.yml)
 
 A set of high-level APIs over PointyCastle for two-way cryptography.
+
+> **Note:** This is a maintained fork of the original [encrypt](https://github.com/leocavalcante/encrypt) package. The original repository has been archived. This fork includes CI/CD improvements and automated release management.
 
 > Looking for password hashing? Please, visit [password](https://github.com/leocavalcante/password-dart).
 
