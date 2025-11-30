@@ -53,6 +53,7 @@ jobs:
           echo "🔍 Determining previous version..."
           
           # Method 1: Try to get from base branch's manifest (most reliable)
+          # Uses GitHub API to read .release-please-manifest.json from the base branch
           echo "📋 Checking base branch (${{ github.event.pull_request.base.ref }}) manifest..."
           BASE_MANIFEST=$(gh api repos/${{ github.repository }}/contents/.release-please-manifest.json?ref=${{ github.event.pull_request.base.ref }} 2>/dev/null | jq -r '.content' | base64 -d 2>/dev/null || echo "")
           if [ -n "$BASE_MANIFEST" ]; then
