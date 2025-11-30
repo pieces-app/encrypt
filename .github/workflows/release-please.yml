@@ -75,6 +75,10 @@ jobs:
     needs: release-please
     if: ${{ needs.release-please.outputs.releases_created != 'true' }}
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.process.outputs.release_created }}
+      tag_name: ${{ steps.process.outputs.tag_name }}
+      version: ${{ steps.process.outputs.version }}
     steps:
       - name: 📥 Checkout source code
         uses: actions/checkout@v4
@@ -82,6 +86,7 @@ jobs:
           fetch-depth: 0
 
       - name: 🔍 Find and process untagged merged release PRs
+        id: process
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -95,13 +100,19 @@ jobs:
           
           if [ -z "$PENDING_PRS" ]; then
             echo "✅ No untagged merged release PRs found"
+            echo "release_created=false" >> $GITHUB_OUTPUT
             exit 0
           fi
           
           echo "📋 Found untagged release PRs:"
           echo "$PENDING_PRS"
           
-          echo "$PENDING_PRS" | jq -c '.' | while read -r pr; do
+          RELEASE_CREATED=false
+          LATEST_TAG=""
+          LATEST_VERSION=""
+          
+          # Use process substitution to avoid subshell issues
+          while IFS= read -r pr; do
             PR_NUM=$(echo "$pr" | jq -r '.number')
             PR_TITLE=$(echo "$pr" | jq -r '.title')
             MERGE_SHA=$(echo "$pr" | jq -r '.mergeCommit.oid')
@@ -132,6 +143,9 @@ jobs:
               echo "✅ Release $TAG_NAME already exists"
             else
               echo "🎉 Creating GitHub Release $TAG_NAME"
+              RELEASE_CREATED=true
+              LATEST_TAG="$TAG_NAME"
+              LATEST_VERSION="$VERSION"
               
               CHANGELOG=$(awk -v ver="$VERSION" '
                 /^## \[/ {
@@ -185,21 +199,32 @@ jobs:
               --add-label "autorelease: tagged" || true
             
             echo "✅ Processed PR #$PR_NUM"
-          done
+          done < <(echo "$PENDING_PRS" | jq -c '.')
+          
+          # Output the latest release info (if any was created)
+          if [ "$RELEASE_CREATED" = "true" ]; then
+            echo "release_created=true" >> $GITHUB_OUTPUT
+            echo "tag_name=$LATEST_TAG" >> $GITHUB_OUTPUT
+            echo "version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "release_created=false" >> $GITHUB_OUTPUT
+          fi
 
   # =============================================================================
   # Verify Release
   # =============================================================================
   verify-release:
     name: ✅ Verify Release
-    needs: release-please
-    if: ${{ needs.release-please.outputs.releases_created == 'true' }}
+    needs: [release-please, handle-untagged-releases]
+    if: |
+      needs.release-please.outputs.releases_created == 'true' ||
+      (needs.handle-untagged-releases.outputs.release_created == 'true' && needs.handle-untagged-releases.result == 'success')
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout source code
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.release-please.outputs.tag_name }}
+          ref: ${{ needs.release-please.outputs.releases_created == 'true' && needs.release-please.outputs.tag_name || needs.handle-untagged-releases.outputs.tag_name }}
 
       - name: 🎯 Install Dart SDK
         uses: dart-lang/setup-dart@v1
@@ -213,7 +238,7 @@ jobs:
         run: |
           echo "📦 Verifying package version..."
           VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
-          EXPECTED="${{ needs.release-please.outputs.version }}"
+          EXPECTED="${{ needs.release-please.outputs.releases_created == 'true' && needs.release-please.outputs.version || needs.handle-untagged-releases.outputs.version }}"
           if [ "$VERSION" != "$EXPECTED" ]; then
             echo "❌ Version mismatch: pubspec.yaml has $VERSION, expected $EXPECTED"
             exit 1
@@ -228,7 +253,8 @@ jobs:
 
       - name: 📋 Release Summary
         run: |
-          echo "## 🎉 Release v${{ needs.release-please.outputs.version }} Verified!" >> $GITHUB_STEP_SUMMARY
+          VERSION="${{ needs.release-please.outputs.releases_created == 'true' && needs.release-please.outputs.version || needs.handle-untagged-releases.outputs.version }}"
+          echo "## 🎉 Release v$VERSION Verified!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📦 Installation" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -239,10 +265,10 @@ jobs:
           echo "    git:" >> $GITHUB_STEP_SUMMARY
           echo "      url: https://github.com/pieces-app/encrypt" >> $GITHUB_STEP_SUMMARY
           echo "      tag_pattern: \"^v\"" >> $GITHUB_STEP_SUMMARY
-          echo "    version: ^${{ needs.release-please.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "    version: ^$VERSION" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🔗 Links" >> $GITHUB_STEP_SUMMARY
-          echo "- [GitHub Release](https://github.com/${{ github.repository }}/releases/tag/v${{ needs.release-please.outputs.version }})" >> $GITHUB_STEP_SUMMARY
+          echo "- [GitHub Release](https://github.com/${{ github.repository }}/releases/tag/v$VERSION)" >> $GITHUB_STEP_SUMMARY
           echo "- [Changelog](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/CHANGELOG.md)" >> $GITHUB_STEP_SUMMARY
 
